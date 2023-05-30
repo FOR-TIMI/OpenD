@@ -14,7 +14,7 @@ function App() {
       <Header />
       {/* <img className="bottom-space" src={homeImage} /> */}
       {/* <Item id={nftId} /> */}
-      <Minter />
+      {/* <Minter /> */}
       <Footer />
     </div>
   );

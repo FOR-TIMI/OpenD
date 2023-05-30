@@ -15,7 +15,7 @@ function Item({ id }) {
   const loadNft = async () => {
     const NFTActor = await Actor.createActor(idlFactory, {
       agent,
-      canisterId: Principal.fromText(id),
+      canisterId: id,
     });
 
     const name = await NFTActor.getName();
