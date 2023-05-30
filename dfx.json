@@ -4,17 +4,16 @@
       "main": "src/opend/main.mo",
       "type": "motoko"
     },
+    "nft": {
+      "main": "src/NFT/nft.mo",
+      "type": "motoko"
+    },
     "opend_assets": {
-      "dependencies": [
-        "opend"
-      ],
+      "dependencies": ["opend"],
       "frontend": {
         "entrypoint": "src/opend_assets/src/index.html"
       },
-      "source": [
-        "src/opend_assets/assets",
-        "dist/opend_assets/"
-      ],
+      "source": ["src/opend_assets/assets", "dist/opend_assets/"],
       "type": "assets"
     }
   },
