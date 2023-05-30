@@ -5,13 +5,16 @@ import Item from "./Item";
 
 function Minter() {
   const [nftPrincipal, setNftPrincipal] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
+    setLoading(true);
     const { name, asset } = data;
     const imageByteData = [...new Uint8Array(await asset[0].arrayBuffer())];
 
     const newNftId = await opend.mint(imageByteData, name);
+    setLoading(false);
     setNftPrincipal(newNftId.toText());
   };
 
@@ -48,9 +51,22 @@ function Minter() {
             </div>
           </div>
           <div className="form-ButtonBase-root form-Chip-root makeStyles-chipBlue-108 form-Chip-clickable">
-            <span onClick={handleSubmit(onSubmit)} className="form-Chip-label">
-              Mint NFT
-            </span>
+            {!isLoading ? (
+              <span
+                disabled={isLoading}
+                onClick={handleSubmit(onSubmit)}
+                className="form-Chip-label"
+              >
+                Mint NFT
+              </span>
+            ) : (
+              <div className="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            )}
           </div>
         </form>
       </div>
