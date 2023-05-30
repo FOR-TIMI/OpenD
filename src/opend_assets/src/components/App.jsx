@@ -4,6 +4,7 @@ import homeImage from "../../assets/home-img.png";
 import Footer from "./Footer";
 import Header from "./Header";
 import Item from "./Item";
+import Minter from "./Minter";
 
 function App() {
   const nftId = "rrkah-fqaaa-aaaaa-aaaaq-cai";
@@ -12,7 +13,8 @@ function App() {
     <div className="App">
       <Header />
       {/* <img className="bottom-space" src={homeImage} /> */}
-      <Item id={nftId} />
+      {/* <Item id={nftId} /> */}
+      <Minter />
       <Footer />
     </div>
   );
