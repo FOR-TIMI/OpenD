@@ -8,8 +8,15 @@ import Array "mo:base/Array";
 
 actor OpenD {
 
+    //Custom type To keep track of all sales of an nft
+    private type Listing = {
+        nftOwner : Principal;
+        nftPrice : Nat;
+    };
+
     var NFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1, Principal.equal, Principal.hash); //TO store all NFTs for discover page
     var owners = HashMap.HashMap<Principal, List.List<Principal>>(1, Principal.equal, Principal.hash); // to store list of NTFS to one user
+    var listings = HashMap.HashMap<Principal, Listing>(1, Principal.equal, Principal.hash);
 
     public shared (msg) func mint(imageData : [Nat8], name : Text) : async Principal {
         let owner : Principal = msg.caller;
@@ -47,6 +54,38 @@ actor OpenD {
         };
 
         return List.toArray(ownedNfts);
+    };
+
+    public shared (msg) func listNft(id : Principal, price : Nat) : async Text {
+        //Find NFT
+        let nft : NFTActorClass.NFT = switch (NFTs.get(id)) {
+            case null return "NFT does not exist.";
+            case (?result) result;
+        };
+
+        //Find the owner of the NFT
+        let owner = await nft.getOwner();
+
+        //Make sure only the owner can sell;
+        if (Principal.equal(owner, msg.caller)) {
+            // Create new listing
+            let newListing : Listing = {
+                nftOwner = owner;
+                nftPrice = price;
+            };
+
+            //Add listing to the list of listings
+            listings.put(id, newListing);
+
+            return "NFT Listed Successfully";
+        } else {
+            return "This NFT belongs to someone else.";
+        };
+
+    };
+
+    public query func getOpenDCanisterID() : async Principal {
+        return Principal.fromActor(OpenD);
     };
 
 };

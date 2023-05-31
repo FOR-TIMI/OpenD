@@ -5,9 +5,9 @@ import Debug "mo:base/Debug";
 //Contract for NFT
 actor class NFT(name : Text, owner : Principal, content : [Nat8]) = this {
 
-    let itemName = name;
-    let nftOwner = owner;
-    let imageBytes = content;
+    private let itemName = name;
+    private var nftOwner = owner;
+    private let imageBytes = content;
 
     public query func getName() : async Text {
         return itemName;
@@ -25,4 +25,14 @@ actor class NFT(name : Text, owner : Principal, content : [Nat8]) = this {
         return Principal.fromActor(this);
     };
 
+    public shared (msg) func transferOwnership(newOwnerId : Principal) : async Text {
+
+        if (msg.caller == nftOwner) {
+            nftOwner := newOwnerId;
+            return "Transferred Successfully";
+        } else {
+            return "Error: This NFT belongs to someone else";
+        };
+
+    };
 };
