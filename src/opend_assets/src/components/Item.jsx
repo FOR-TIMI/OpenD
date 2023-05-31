@@ -11,6 +11,10 @@ function Item({ id }) {
   const [content, setContent] = useState(null);
   const [button, setButton] = useState(null);
   const [priceInput, setPriceInput] = useState(null);
+  const [sellStatus, setSellStatus] = useState("");
+  const [blur, setBlur] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const url = "http://127.0.0.1:8000/";
   const agent = new HttpAgent({ host: url });
@@ -40,7 +44,15 @@ function Item({ id }) {
     setOwner(owner.toText());
     setContent(image);
 
-    setButton(<Button handleClick={handleSell} text="Sell" />);
+    const nftIsListed = await opend.isListed(id);
+
+    if (nftIsListed) {
+      setOwner("opend");
+      setBlur({ filter: "blur(4px)" });
+      setSellStatus("Listed");
+    } else {
+      setButton(<Button handleClick={handleSell} text="Sell" />);
+    }
   };
 
   let price;
@@ -60,30 +72,31 @@ function Item({ id }) {
   };
 
   const sellItem = async () => {
-    console.log("pre Flight");
+    setBlur({ filter: "blur(4px)" });
+    setPriceInput();
+    setIsLoading(true);
+
     try {
       const result = await opend.listNft(id, Number(price));
 
       if (result.trim() === "NFT Listed Successfully") {
         const openDCanisterId = await opend.getOpenDCanisterID();
 
-        console.log(openDCanisterId);
-
         //To transfer ownership to OpenD once NFT is listed
         const result = await NFTActor.transferOwnership(openDCanisterId); // "Transferred Successfully"
 
         console.log(result);
       }
-
-      console.log("Debug");
     } catch (err) {
       console.error(err.message);
+    } finally {
+      setIsLoading(false);
+      setButton();
+      setOwner("OpenD");
     }
   };
 
-  useEffect(() => {
-    loadNft();
-  }, []);
+  useEffect(() => loadNft(), []);
 
   return (
     <div className="disGrid-item">
@@ -91,17 +104,29 @@ function Item({ id }) {
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
           src={content}
+          style={blur}
         />
         <div className="disCardContent-root">
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
             {name}
-            <span className="purple-text"></span>
+            <span className="purple-text"> {sellStatus}</span>
           </h2>
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
             Owner: {owner}
           </p>
-          {priceInput}
-          {button}
+          {!isLoading ? (
+            <>
+              {priceInput}
+              {button}
+            </>
+          ) : (
+            <div className="lds-ellipsis">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          )}
         </div>
       </div>
     </div>

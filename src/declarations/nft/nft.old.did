@@ -1,7 +1,0 @@
-service : {
-  getCanisterId: () -> (principal) query;
-  getContent: () -> (vec nat8) query;
-  getName: () -> (text) query;
-  getOwner: () -> (principal) query;
-  transferOwnership: (principal) -> (text);
-}

@@ -15,7 +15,7 @@ function Minter() {
 
     const newNftId = await opend.mint(imageByteData, name);
     setLoading(false);
-    setNftPrincipal(newNftId.toText());
+    setNftPrincipal(newNftId);
   };
 
   if (nftPrincipal === "") {

@@ -5,7 +5,7 @@ function Gallery({ title, ids }) {
   const [items, setItems] = useState();
 
   const fetchNFTs = () => {
-    if (ids !== undefined) {
+    if (ids) {
       setItems(ids.map((nftId) => <Item id={nftId} key={nftId.toText()} />));
     }
   };

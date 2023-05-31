@@ -88,4 +88,12 @@ actor OpenD {
         return Principal.fromActor(OpenD);
     };
 
+    public query func isListed(id : Principal) : async Bool {
+        if (listings.get(id) == null) {
+            return false;
+        } else {
+            return true;
+        };
+    };
+
 };
