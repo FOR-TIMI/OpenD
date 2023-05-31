@@ -5,6 +5,7 @@ import Debug "mo:base/Debug";
 import HashMap "mo:base/HashMap";
 import List "mo:base/List";
 import Array "mo:base/Array";
+import Iter "mo:base/Iter";
 
 actor OpenD {
 
@@ -56,6 +57,10 @@ actor OpenD {
         return List.toArray(ownedNfts);
     };
 
+    public query func getListedNFTs() : async [Principal] {
+        return Iter.toArray(listings.keys());
+    };
+
     public shared (msg) func listNft(id : Principal, price : Nat) : async Text {
         //Find NFT
         let nft : NFTActorClass.NFT = switch (NFTs.get(id)) {
@@ -94,6 +99,24 @@ actor OpenD {
         } else {
             return true;
         };
+    };
+
+    public query func getOriginalOwner(id : Principal) : async Principal {
+        var listing : Listing = switch (listings.get(id)) {
+            case null return Principal.fromText("");
+            case (?result) result;
+        };
+
+        return listing.nftOwner;
+    };
+
+    public query func getNftPrice(id : Principal) : async Nat {
+        var listing : Listing = switch (listings.get(id)) {
+            case null return 0;
+            case (?result) result;
+        };
+
+        return listing.nftPrice;
     };
 
 };

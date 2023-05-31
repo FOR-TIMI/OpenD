@@ -3,9 +3,11 @@ import { Principal } from "@dfinity/principal";
 import React, { useEffect, useState } from "react";
 import { idlFactory } from "../../../declarations/nft/index";
 import { opend } from "../../../declarations/opend/index";
+import CURRENT_USER_ID from "../index";
 import Button from "./Button";
+import PriceLabel from "./PriceLabel";
 
-function Item({ id }) {
+function Item({ id, role }) {
   const [name, setName] = useState(null);
   const [owner, setOwner] = useState(null);
   const [content, setContent] = useState(null);
@@ -13,11 +15,14 @@ function Item({ id }) {
   const [priceInput, setPriceInput] = useState(null);
   const [sellStatus, setSellStatus] = useState("");
   const [blur, setBlur] = useState(null);
+  const [priceLabel, setPriceLabel] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const url = "http://127.0.0.1:8000/";
   const agent = new HttpAgent({ host: url });
+
+  const isDiscoverPage = role === "discover";
 
   //TODO: Remove this line when deploying the project live
   agent.fetchRootKey();
@@ -44,14 +49,25 @@ function Item({ id }) {
     setOwner(owner.toText());
     setContent(image);
 
-    const nftIsListed = await opend.isListed(id);
+    if (!isDiscoverPage) {
+      const nftIsListed = await opend.isListed(id);
 
-    if (nftIsListed) {
-      setOwner("opend");
-      setBlur({ filter: "blur(4px)" });
-      setSellStatus("Listed");
+      if (nftIsListed) {
+        setOwner("opend");
+        setBlur({ filter: "blur(4px)" });
+        setSellStatus("Listed");
+      } else {
+        setButton(<Button handleClick={handleSell} text="Sell" />);
+      }
     } else {
-      setButton(<Button handleClick={handleSell} text="Sell" />);
+      const originalOwner = await opend.getOriginalOwner(id);
+
+      if (originalOwner.toText() !== CURRENT_USER_ID.toText()) {
+        setButton(<Button handleClick={handleBuy} text="Buy" />);
+      }
+
+      const price = await opend.getNftPrice(id);
+      setPriceLabel(<PriceLabel price={price.toString()} />);
     }
   };
 
@@ -69,6 +85,10 @@ function Item({ id }) {
     );
 
     setButton(<Button handleClick={sellItem} text="Confirm" />);
+  };
+
+  const handleBuy = async () => {
+    console.log("Buying...");
   };
 
   const sellItem = async () => {
@@ -104,9 +124,10 @@ function Item({ id }) {
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
           src={content}
-          style={blur}
+          style={!isDiscoverPage ? blur : {}}
         />
         <div className="disCardContent-root">
+          {priceLabel}
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
             {name}
             <span className="purple-text"> {sellStatus}</span>

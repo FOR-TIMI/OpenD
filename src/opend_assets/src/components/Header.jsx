@@ -8,11 +8,17 @@ import Gallery from "./Gallery";
 import Minter from "./Minter";
 
 function Header() {
-  const [userNFTs, setUserNfts] = useState();
+  const [userNFTs, setUserNfts] = useState(null);
+  const [listedNftGallery, setListedNftGallery] = useState(null);
 
   const getNfts = async () => {
     const userNFTIds = await opend.getOwnedNFTs(CURRENT_USER_ID);
-    setUserNfts(<Gallery ids={userNFTIds} title="My Nfts" />);
+    setUserNfts(<Gallery ids={userNFTIds} title="My Nfts" role="collection" />);
+
+    const listedNFTIds = await opend.getListedNFTs();
+    setListedNftGallery(
+      <Gallery ids={listedNFTIds} title="Discover" role="discover" />
+    );
   };
 
   // Get user's list of NFTs
@@ -45,9 +51,7 @@ function Header() {
       </div>
 
       <Switch>
-        <Route path="/discover">
-          <h1>Discover</h1>
-        </Route>
+        <Route path="/discover">{listedNftGallery}</Route>
 
         <Route path="/minter">
           <Minter />

@@ -1,12 +1,14 @@
 import { Principal } from "@dfinity/principal";
 import React, { useEffect, useState } from "react";
 import Item from "./Item";
-function Gallery({ title, ids }) {
+function Gallery({ title, ids, role }) {
   const [items, setItems] = useState();
 
   const fetchNFTs = () => {
     if (ids) {
-      setItems(ids.map((nftId) => <Item id={nftId} key={nftId.toText()} />));
+      setItems(
+        ids.map((nftId) => <Item id={nftId} key={nftId.toText()} role={role} />)
+      );
     }
   };
 
