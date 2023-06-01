@@ -1,4 +1,5 @@
 service : {
+  completePurchase: (principal, principal, principal) -> (text);
   getListedNFTs: () -> (vec principal) query;
   getNftPrice: (principal) -> (nat) query;
   getOpenDCanisterID: () -> (principal) query;
