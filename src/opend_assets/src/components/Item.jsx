@@ -3,6 +3,7 @@ import { Principal } from "@dfinity/principal";
 import React, { useEffect, useState } from "react";
 import { idlFactory } from "../../../declarations/nft/index";
 import { opend } from "../../../declarations/opend/index";
+import { idlFactory as tokenIdlFactory } from "../../../declarations/token";
 import CURRENT_USER_ID from "../index";
 import Button from "./Button";
 import PriceLabel from "./PriceLabel";
@@ -89,6 +90,31 @@ function Item({ id, role }) {
 
   const handleBuy = async () => {
     console.log("Buying...");
+    const tokenActor = await Actor.createActor(tokenIdlFactory, {
+      agent,
+      canisterId: Principal.fromText("sp3hj-caaaa-aaaaa-aaajq-cai"),
+    });
+
+    //To get the original seller's id not opend
+    const sellerId = await opend.getOriginalOwner(id);
+
+    const nftPrice = await opend.getNftPrice(id);
+
+    //To transfer from the user to the seller
+    const res = await tokenActor.transfer(sellerId, nftPrice);
+
+    console.log({ nftPrice, res, sellerId });
+
+    //To transfer ownership of nft if the transfer is successful
+    if (res === "Success") {
+      const result = await opend.completePurchase({
+        id,
+        sellerId,
+        CURRENT_USER_ID, // represent signed in user's id
+      });
+
+      console.log("Purchase: " + result);
+    }
   };
 
   const sellItem = async () => {
