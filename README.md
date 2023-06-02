@@ -1,6 +1,7 @@
 # DBANK
 
-Decentrallized application that allows you to trade nft's using Decentralized Eri tokens or `DERI` tokens for short.
+Decentrallized application that allows you to trade nft's using Decentralized Eri tokens or `DERI` tokens for short. 
+Built on the Network Nervous System , using Internet Computer Block chain
 
 # To Install and Run the Project
 
