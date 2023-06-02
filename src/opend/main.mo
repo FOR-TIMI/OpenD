@@ -126,9 +126,11 @@ actor OpenD {
             case (?result) result;
         };
 
+        Debug.print("After switch NFTActorClass");
+
         let transferResult = await purchasedNFT.transferOwnership(newOwner);
 
-        Debug.print(debug_show (transferResult));
+        Debug.print(debug_show ("After Transfer ownership"));
 
         if (transferResult == "Transferred Successfully") {
             listings.delete(id); //- Update the list of currently listed Nfts
@@ -149,7 +151,7 @@ actor OpenD {
                 },
             );
 
-            Debug.print(debug_show (ownedNfts));
+            Debug.print(debug_show ("After remove that NFT from the seller's list of owned NFT's"));
 
             // Update the buyer's list of NFTs
             addToOwner(newOwner, id);

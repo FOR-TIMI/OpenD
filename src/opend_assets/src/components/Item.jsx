@@ -100,6 +100,7 @@ function Item({ id, role }) {
 
     const nftPrice = await opend.getNftPrice(id);
 
+    // completePurchase(id : Principal, oldOwner : Principal, newOwner : Principal)
     //To transfer from the user to the seller
     const res = await tokenActor.transfer(sellerId, nftPrice);
 
@@ -107,11 +108,11 @@ function Item({ id, role }) {
 
     //To transfer ownership of nft if the transfer is successful
     if (res === "Success") {
-      const result = await opend.completePurchase({
+      const result = await opend.completePurchase(
         id,
         sellerId,
-        CURRENT_USER_ID, // represent signed in user's id
-      });
+        CURRENT_USER_ID // represent signed in user's id
+      );
 
       console.log("Purchase: " + result);
     }
