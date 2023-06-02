@@ -100,11 +100,8 @@ function Item({ id, role }) {
 
     const nftPrice = await opend.getNftPrice(id);
 
-    // completePurchase(id : Principal, oldOwner : Principal, newOwner : Principal)
     //To transfer from the user to the seller
     const res = await tokenActor.transfer(sellerId, nftPrice);
-
-    console.log({ nftPrice, res, sellerId });
 
     //To transfer ownership of nft if the transfer is successful
     if (res === "Success") {
@@ -119,11 +116,17 @@ function Item({ id, role }) {
   };
 
   const sellItem = async () => {
-    setBlur({ filter: "blur(4px)" });
+    let noPrice = !price || !price.length;
+
+    if (noPrice) return;
+
     setPriceInput();
     setIsLoading(true);
-
     try {
+      if (noPrice) {
+        throw new Error("You must add a price");
+      }
+
       const result = await opend.listNft(id, Number(price));
 
       if (result.trim() === "NFT Listed Successfully") {
@@ -137,6 +140,7 @@ function Item({ id, role }) {
     } catch (err) {
       console.error(err.message);
     } finally {
+      setBlur({ filter: "blur(4px)" });
       setIsLoading(false);
       setButton();
       setOwner("OpenD");
